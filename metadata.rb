@@ -1,0 +1,10 @@
+name             'riemann'
+maintainer       'Jorge Espada'
+maintainer_email 'espada.jorge@gmail.com'
+license          'All rights reserved'
+description      'Installs/Configures riemann'
+version          '0.1.0'
+
+depends 'java'
+depends 'rbenv'
+depends 'runit'

@@ -1,0 +1,38 @@
+(logging/init :file "<%= @log_dir %>/riemann.log")
+
+(tcp-server :host "<%= @tcp_listen_host %>" :port <%= @tcp_listen_port %>)
+(udp-server :host "<%= @udp_listen_host %>" :port <%= @udp_listen_port %>)
+(ws-server :host "<%= @ws_listen_host %>" :port <%= @ws_listen_port %>)
+
+(periodically-expire <%= @expire_period %>)
+
+(let [graph (graphite {:host "<%= @graphite_host %>"})
+
+      ; Keep events for <%= @event_ttl %> seconds
+      index (default :ttl <%= @event_ttl %> (update-index (index)))]
+
+  (info "new")
+
+  (streams
+    ; Index all the things
+    index
+
+    ; Log all the things
+    (fn [event] (info (:host event) (:metric event) (:service event))) 
+
+    ; Overall event rate
+    (with {:metric 1.0 :host nil :state "ok" :service "events/sec"}
+      (rate 5 index))
+   
+    ; Graph health stats
+    (where (service #"^(cpu|memory|load|disk)")
+           graph)
+
+    ; Log expired events.
+    (expired
+      (fn [event] (info "expired" event)))
+
+    (where (service #".*errs") graph)
+    (where (service #".*packets") graph)
+
+))
