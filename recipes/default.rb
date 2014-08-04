@@ -59,14 +59,13 @@ runit_service 'riemann' do
 end
 
 # In case we store the config on a separate repo
-if node['riemann']['conf_repo'] do
+if node['riemann']['conf_repo']
     git node['riemann']['conf_dir'] do
       repository node['riemann']['conf_repo']
       revision node['riemann']['git_revision']
       action :sync
       notifies :restart, 'service[riemann]'
     end
-  end
 else
   template "#{node['riemann']['conf_repo']}/riemann.config" do
     source 'riemann.config.erb'
