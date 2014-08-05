@@ -20,7 +20,6 @@ template ::File.join(node['riemann']['dashboard']['directory'], 'config.rb') do
 end
 
 gem_package 'riemann-dash' do
-  gem_binary '/usr/local/rbenv/shims/gem'
   action :install
 end
 
