@@ -15,8 +15,7 @@ template ::File.join(node['riemann']['dashboard']['directory'], 'config.rb') do
   owner 'riemann'
   group 'riemann'
   mode 00755
-  variables(
-            :port => node['riemann']['dashboard']['port'] )
+  variables(:port => node['riemann']['dashboard']['port'] )
   action :create
 end
 
